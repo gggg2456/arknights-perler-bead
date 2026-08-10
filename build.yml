@@ -1,0 +1,27 @@
+name: 打包exe
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: 安装依赖
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+      - name: 打包
+        run: pyinstaller --onefile --windowed --name "罗德岛拼豆工坊" main.py
+      - name: 发布
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/罗德岛拼豆工坊.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
